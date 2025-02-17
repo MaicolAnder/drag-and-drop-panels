@@ -1,0 +1,42 @@
+<div class="panels-container">
+  <div class="panels-area example-boundary">
+    <div *ngFor="let panel of panels"
+         cdkDrag
+         class="panel"
+         [style.background-color]="panel.color"
+         [style.left.px]="panel.position.x"
+         [style.top.px]="panel.position.y"
+         cdkDragBoundary=".example-boundary"
+         (cdkDragEnded)="onDragEnded($event, panel)"
+         (click)="selectPanel(panel)"
+         [class.selected]="selectedPanel === panel"
+         [style]="{ width: panel.width + 'px', height: panel.height + 'px' }">
+      {{ panel.text }}
+    </div>
+  </div>
+
+  <div class="panel-controls" *ngIf="selectedPanel">
+    <div class="control-group">
+      <label>Panel:</label>
+      <input type="text"
+             [value]="selectedPanel.text"
+             (input)="updatePanelText($any($event.target).value)">
+    </div>
+    <div class="control-group">
+      <label>Descripción:</label>
+      <textarea rows="4"
+                [value]="selectedPanel.description"
+                (input)="updatePanelText($any($event.target).value)"></textarea>
+    </div>
+    <div class="control-group">
+      <label>Color:</label>
+      <input type="color"
+             [value]="selectedPanel.color"
+             (input)="updatePanelColor($any($event.target).value)">
+    </div>
+    <nav class="navigation-menu">
+      <a routerLink="/editor" routerLinkActive="active" class="w-full bg-green-500 text-white py-3 rounded-lg">Editor</a>
+      <a routerLink="/viewer" routerLinkActive="active" class="w-full bg-orange-500 text-white py-3 rounded-lg">Viewer</a>
+    </nav>
+  </div>
+</div>

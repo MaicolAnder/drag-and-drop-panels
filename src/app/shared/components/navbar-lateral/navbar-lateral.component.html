@@ -1,0 +1,28 @@
+<div class="bg-blue-400 text-white w-64 space-y-6 py-7 px-2">
+  <div class="text-lg font-semibold">PYCCA</div>
+  <nav>
+    <div class="text-sm font-medium text-gray-400">Inicio</div>
+    <ul class="mt-2">
+      @for (item of menuItems; track $index) {
+        <li class="flex items-center justify-between p-2 hover:bg-gray-700 rounded">
+          <span>{{ item.title }}</span>
+        </li>
+      }
+    </ul>
+  </nav>
+  <nav>
+    <div class="text-sm font-medium text-gray-400">En línea</div>
+    <ul class="mt-2">
+      @for (item of onlineItems; track $index) {
+        <li class="p-2 hover:bg-gray-700 rounded">
+          {{ item.title }}
+        </li>
+      }
+    </ul>
+  </nav>
+  <div class="text-sm font-medium text-gray-400">Configuraciones</div>
+  <div class="mt-4 text-sm text-gray-400">
+    Elizabeth Swann<br>
+    elizabeth.swan.pycca.com
+  </div>
+</div>
