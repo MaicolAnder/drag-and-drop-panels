@@ -1,20 +1,13 @@
 <h2>Panels Viewer</h2>
+
 <nav class="navigation-menu mt-6 space-y-3">
   <a routerLink="/editor" routerLinkActive="active" class="w-full bg-green-500 text-white py-3 rounded-lg">Editor</a>
   <a routerLink="/viewer" routerLinkActive="active" class="w-full bg-orange-500 text-white py-3 rounded-lg">Viewer</a>
 </nav>
 
-<div class="panels-container">
-  <div
-    *ngFor="let panel of panels"
-    [style.left.px]="panel.position.x"
-    [style.top.px]="panel.position.y"
-    [style.width.px]="panel.width"
-    [style.height.px]="panel.height"
-    [style.background-color]="panel.color"
-    class="panel">
-      <h3>{{ panel.text }}</h3>
-      <p>{{ panel.description }}</p>
+<div #panelsContainer class="panels-container">
+  <div *ngFor="let panel of panels" class="panel" [ngStyle]="getPanelStyle(panel)">
+    <h3>{{ panel.text }}</h3>
+    <p>{{ panel.description }}</p>
   </div>
 </div>
-
