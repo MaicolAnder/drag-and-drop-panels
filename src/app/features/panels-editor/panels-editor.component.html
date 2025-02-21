@@ -1,25 +1,66 @@
-<div class="panels-container">
-  <div #panelsArea class="panels-area example-boundary">
-    <div *ngFor="let panel of panels"
-      cdkDrag
-      class="panel"
-      cdkDragBoundary=".example-boundary"
-      [style.background-color]="panel.color"
-      [style.left]="panel.position.x + '%'"
-      [style.top]="panel.position.y + '%'"
-       [class.selected]="selectedPanel === panel"
-       [style.width]="panel.width + '%'"
-       [style.height]="panel.height + '%'"
-       (cdkDragEnded)="onDragEnded($event, panel)"
-      (click)="selectPanel(panel)">
-        {{ panel.text }}
+
+<div class="flex p-4 gap-5 w-full h-full">
+  <div class="p-0 m-0">
+    <!-- Lista de cards -->
+    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+      @for (card of panels; track $index) {
+        <!-- Card -->
+        <div
+          *ngIf="!card.isVisible"
+          (click)="selectPanel(card)"
+          [class.selected]="selectedPanel === card"
+          class="card-add rounded-lg shadow-md p-2 flex flex-col justify-between items-center"
+        >
+          <!-- Título de la card -->
+          <h3 class="text-sm font-semibold text-center">{{ card.text }}</h3>
+          <button
+            (click)="toggleCardStatus(card)"
+            class="flex justify-center text-sm px-1 py-1 rounded-full w-full border border-gray-200 hover:bg-gray-50 transition-colors" >
+            + Agregar
+          </button>
+        </div>
+      }
     </div>
   </div>
 
-  <div class="panel-controls">
+  <div class="card-boundary">
+    <div *ngFor="let panel of panels">
+      <div
+        *ngIf="panel.isVisible"
+        id="panel-{{ panel.id }}"
+        cdkDrag
+        class="card-box relative"
+        cdkDragBoundary=".card-boundary"
+        [style.background-color]="panel.color"
+        [class.selected]="selectedPanel === panel"
+        [style.width]="panel.width + '%'"
+        [style.height]="panel.height + '%'"
+        [style.left]="panel.position.x + '%'"
+        [style.top]="panel.position.y + '%'"
+        (cdkDragEnded)="onDragEnded($event, panel)"
+        (click)="selectPanel(panel)">
+          <!-- Delete button -->
+          <button
+            (click)="toggleCardStatus(panel); $event.stopPropagation()"
+            class="absolute top-2 right-2 p-2 border border-gray-300 hover:bg-gray-100 rounded-full transition-colors">
+            <i class="feather-trash-2 text-red-500 w-4 h-4"></i>
+          </button>
+          {{ panel.text }}
+          <i data-feather="circle"></i>
+      </div>
+    </div>
+</div>
+
+  <div class="bg-gray-50 p-4">
+    <div class="flex flex-wrap text-center">
+      <div class="w-full">
+        <h1 class="text-l font-semibold">Panel Seleccionado</h1>
+      </div>
+    </div>
     <div *ngIf="selectedPanel">
+      <br>
       <div class="control-group">
-        <label>Panel:</label>
+        <label>Nombre:</label>
         <input type="text"
               [value]="selectedPanel.text"
               (input)="updatePanelText($any($event.target).value)">
@@ -36,10 +77,24 @@
               [value]="selectedPanel.color"
               (input)="updatePanelColor($any($event.target).value)">
       </div>
+      <div class="control-group flex items-center space-x-2" >
+        <label class="flex items-center space-x-2">
+          <span class="text-sm">{{ selectedPanel.isVisible ? 'Activada' : 'Inactivada' }}</span>
+        </label>
+        <input
+            type="checkbox"
+            [checked]="selectedPanel.isVisible"
+            (change)="toggleCardStatus(selectedPanel)"
+            class="form-checkbox h-5 w-5 text-green-600 rounded"
+          />
+      </div>
     </div>
-    <nav class="navigation-menu">
-      <a routerLink="/editor" routerLinkActive="active" class="w-full bg-green-500 text-white py-3 rounded-lg">Editor</a>
-      <a routerLink="/viewer" routerLinkActive="active" class="w-full bg-orange-500 text-white py-3 rounded-lg">Viewer</a>
-    </nav>
+    <div class="flex justify-center mt-10">
+      <nav class="control-group navigation-menu gap-3">
+        <a routerLink="/editor" routerLinkActive="active" class="w-full bg-green-500 text-white p-3 m-2 rounded-lg">Editor</a>
+        <a routerLink="/viewer" routerLinkActive="active" class="w-full bg-orange-500 text-white p-3 m-2 rounded-lg">Viewer</a>
+      </nav>
+    </div>
   </div>
+
 </div>

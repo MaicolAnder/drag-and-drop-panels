@@ -1,0 +1,28 @@
+<aside class="fixed left-0 top-0 h-screen w-16 bg-white shadow-lg flex flex-col items-center py-4 space-y-6">
+  <!-- Menu Button -->
+  <button class="p-2 hover:bg-gray-100 rounded-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+
+  <!-- Navigation Items -->
+  <nav class="flex-1 w-full">
+    <ul class="flex flex-col items-center space-y-4">
+      <li *ngFor="let item of menuItems"
+          class="w-full flex justify-center">
+        <a [routerLink]="item.route"
+           class="bg-emerald-200 p-2 hover:bg-gray-300 rounded-lg transition-colors duration-200 w-10 h-10 flex items-center justify-center">
+          <i class="feather-{{ item.icon }} text-gray-500"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Profile at bottom -->
+  <div class="mb-4">
+    <div class="w-10 h-10 rounded-full overflow-hidden">
+      <img src="assets/profile.png" alt="Profile" class="w-full h-full object-cover">
+    </div>
+  </div>
+</aside>

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragMove, CdkDragStart, DragDropModule, DragRef, Point } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -12,6 +12,7 @@ interface Panel {
   position: { x: number; y: number };
   width: number;
   height: number;
+  isVisible?: boolean;
 }
 
 @Component({
@@ -26,82 +27,94 @@ export class PanelsEditorComponent implements AfterViewInit {
 
   readonly PANEL_WIDTH = 25;
   readonly PANEL_HEIGHT = 15;
-  readonly GRID_SIZE = 20;
 
   panelsAreaWidth = 1;  // Se actualizará dinámicamente
   panelsAreaHeight = 1;
+  dragPosition = { x: 0, y: 0 };
 
   panels: Panel[] = [];
 
+  // Update the example panels dimensions
   examplePanel: Panel[] = [
     {
       id: 1,
       text: 'Panel Carrito de Productos',
       description: 'Escanea el código de barras del producto y agrega al carrito',
-      color: '#EBEBEB',
-      position: { x: 0, y: 0 },
-      width: 70,
-      height: 60
+      color: '#FFFFFF',
+      position: { x: 1, y: 1 },
+      width: 70,    // Increased width for main cart panel
+      height: 65,    // Increased height for main cart panel
+      isVisible: true
     },
     {
       id: 2,
       text: 'Panel información clientes',
       description: 'Busqueda o opción de creación de clientes',
-      color: '#E8E8E8',
-      position: { x: 75, y: 0 },
-      width: this.PANEL_WIDTH,
-      height: this.PANEL_HEIGHT
+      color: '#FFFFFF',
+      position: { x: 76, y: 1 },
+      width: 23,    // Adjusted width for right side panels
+      height: 20,    // Adjusted height for right side panels
+      isVisible: true
     },
     {
       id: 3,
       text: 'Panel información asesores',
       description: 'Información de asesores',
-      color: '#ffffff',
-      position: { x: 75, y: 20 },
-      width: this.PANEL_WIDTH,
-      height: this.PANEL_HEIGHT
+      color: '#FFFFFF',
+      position: { x: 76, y: 22 },
+      width: 23,
+      height: 20,
+      isVisible: true
     },
     {
       id: 4,
       text: 'Panel Clientes Pycca',
       description: 'Información de clientes Pycca',
-      color: '#EBF3FF',
-      position: { x: 75, y: 40 },
-      width: this.PANEL_WIDTH,
-      height: this.PANEL_HEIGHT
+      color: '#FFFFFF',
+      position: { x: 76, y: 43 },
+      width: 23,
+      height: 20,
+      isVisible: false
     },
     {
       id: 5,
-      text: 'Panel Visualizar Promociones',
+      text: 'Visualizar Promociones',
       description: 'Visualización de promociones',
       color: '#ffffff',
-      position: { x: 0, y: 65 },
+      position: { x: 1, y: 68 },
       width: 70,
-      height: this.PANEL_HEIGHT
+      height: this.PANEL_HEIGHT,
+      isVisible: false
     },
     {
       id: 6,
-      text: 'Panel Información de saldos',
+      text: 'Información de saldos',
       description: 'Desglosado de los saldos de la cuenta',
       color: '#F5FFCC',
-      position: { x: 75, y: 60 },
-      width: this.PANEL_WIDTH,
-      height: this.PANEL_HEIGHT*2
+      position: { x: 76, y: 64 },
+      width: 23,
+      height: this.PANEL_HEIGHT*2,
+      isVisible: true
     },
   ];
 
   selectedPanel: Panel | null = null;
 
   constructor() {
-    this.panels = this.getPanelPositions();
-    console.log(this.panels);
+    this.panels = this.examplePanel;
     if (this.panels.length === 0) {
-      this.panels = this.examplePanel;
+      // Initialize example panels with visibility
+      this.panels = this.examplePanel.map(panel => ({ ...panel, isVisible: true }));
     }
   }
 
   ngAfterViewInit() {
     this.updatePanelsAreaSize();
+  }
+
+  toggleCardStatus(panel: Panel): void {
+    panel.isVisible = !panel.isVisible;
+    console.log(`Card ${panel.id} está ${panel.isVisible ? 'activada' : 'inactivada'}`);
   }
 
   updatePanelsAreaSize() {
@@ -111,20 +124,7 @@ export class PanelsEditorComponent implements AfterViewInit {
     }
   }
 
-  onDragEnded(event: CdkDragEnd, panel: Panel): void {
-    const element = event.source.element.nativeElement;
-    const offsetX = element.offsetLeft;
-    const offsetY = element.offsetTop;
-
-    if (this.panelsAreaWidth && this.panelsAreaHeight) {
-      let newX = (offsetX / this.panelsAreaWidth) * 100;
-      let newY = (offsetY / this.panelsAreaHeight) * 100;
-
-      // Evitar valores negativos y asegurarse de que no salga del área
-      panel.position.x = Math.max(0, Math.min(newX, 100 - panel.width));
-      panel.position.y = Math.max(0, Math.min(newY, 100 - panel.height));
-    }
-
+  onDragEnded(event: CdkDragEnd, panel: any): void {
     this.savePanelPositions();
   }
 
@@ -146,14 +146,22 @@ export class PanelsEditorComponent implements AfterViewInit {
     }
   }
 
+  togglePanelVisibility(): void {
+    if (this.selectedPanel) {
+      this.selectedPanel.isVisible = !this.selectedPanel.isVisible;
+      this.savePanelPositions();
+    }
+  }
+
   private savePanelPositions(): void {
     const panels = JSON.stringify(this.panels);
     localStorage.setItem('panels', panels);
     console.log('Guardado', JSON.parse(panels));
   }
 
-  private getPanelPositions(): Panel[] {
+  getPanelPositions(){
     const panels = localStorage.getItem('panels');
     return panels ? JSON.parse(panels) : [];
   }
+
 }

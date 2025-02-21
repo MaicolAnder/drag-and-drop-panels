@@ -24,7 +24,9 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets/etnia.png",
+              "src/assets/profile.png"
             ],
             "styles": [
               "src/styles.css"
